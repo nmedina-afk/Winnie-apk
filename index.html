@@ -41,6 +41,7 @@
     padding: 10px 30px;
     font-size: 1.2rem;
     cursor: pointer;
+    margin: 5px;
   }
   button:active {
     background-color: #666;
@@ -55,58 +56,80 @@
 
 <div class="timer-block">
   <div>Cuartos</div>
-  <div class="time-display" id="quarterTime">00:01:50</div>
+  <div class="time-display" id="quarterTime">01:50</div>
   <button onclick="startTimer('quarter')">Iniciar</button>
+  <button onclick="pauseTimer('quarter')">Pausar</button>
+  <button onclick="resetTimer('quarter')">Reiniciar</button>
 </div>
 
 <div class="timer-block">
   <div>Entretiempo</div>
-  <div class="time-display" id="breakTime">00:09:50</div>
+  <div class="time-display" id="breakTime">09:50</div>
   <button onclick="startTimer('break')">Iniciar</button>
+  <button onclick="pauseTimer('break')">Pausar</button>
+  <button onclick="resetTimer('break')">Reiniciar</button>
 </div>
 
-<audio id="alertSound" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" preload="auto"></audio>
+<audio id="alertSound" src="alarm.wav" preload="auto"></audio>
 
 <script>
-let timers = {
-  quarter: {duration: 110, remaining: 110, interval: null}, // 1:50 en segundos
-  break: {duration: 590, remaining: 590, interval: null}    // 9:50 en segundos
-};
+if (typeof timers === 'undefined') {
+  let timers = {
+    quarter: {duration: 110, remaining: 110, interval: null},
+    break: {duration: 590, remaining: 590, interval: null}
+  };
+}
 
-function updateClock(){
+function updateClock() {
   let now = new Date();
   document.getElementById("localClock").textContent = now.toLocaleTimeString();
 }
 setInterval(updateClock, 1000);
 updateClock();
 
-function formatTime(sec){
+function formatTime(sec) {
   let m = Math.floor(sec / 60).toString().padStart(2, '0');
   let s = (sec % 60).toString().padStart(2, '0');
   return `${m}:${s}`;
 }
 
-function startTimer(type){
+function startTimer(type) {
   let timer = timers[type];
-  if(timer.interval) clearInterval(timer.interval);
-  timer.remaining = timer.duration;
+  if (timer.interval) clearInterval(timer.interval);
+  timer.remaining = timer.remaining > 0 ? timer.remaining : timer.duration;
 
   timer.interval = setInterval(() => {
     timer.remaining--;
-    document.getElementById(type + "Time").textContent = "00:" + formatTime(timer.remaining);
+    document.getElementById(type + "Time").textContent = formatTime(timer.remaining);
     
-    if(timer.remaining === 10){
+    if (timer.remaining === 10) {
       document.getElementById("alertSound").play();
     }
 
-    if(timer.remaining <= 0){
+    if (timer.remaining <= 0) {
       clearInterval(timer.interval);
       document.getElementById("alertSound").play();
     }
   }, 1000);
 }
+
+function pauseTimer(type) {
+  let timer = timers[type];
+  if (timer.interval) {
+    clearInterval(timer.interval);
+    timer.interval = null;
+  }
+}
+
+function resetTimer(type) {
+  let timer = timers[type];
+  if (timer.interval) clearInterval(timer.interval);
+  timer.remaining = timer.duration;
+  document.getElementById(type + "Time").textContent = formatTime(timer.remaining);
+  document.getElementById("alertSound").pause();
+  document.getElementById("alertSound").currentTime = 0;
+}
 </script>
 
 </body>
 </html>
-
