@@ -17,45 +17,62 @@
     .clock {
       font-size: 6rem;
       font-weight: bold;
-      margin-top: 20px;
+      margin-top: 10px;
     }
     h2 {
-      margin: 20px 0 10px 0;
-      font-size: 1.8rem;
+      margin: 15px 0;
+      font-size: 2rem;
     }
     .timer-block {
       background-color: #1c1c1c;
       border-radius: 15px;
       padding: 20px;
-      margin: 15px;
+      margin: 15px auto;
+      max-width: 380px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.1);
     }
     .time-display {
-      font-size: 3rem;
+      font-size: 4rem;
       font-weight: bold;
       margin: 10px 0;
     }
     button {
-      background-color: #444;
       border: none;
-      border-radius: 25px;
+      border-radius: 50px; /* Bordes grandes para proporción */
       color: white;
-      padding: 10px 30px;
-      font-size: 1.2rem;
+      padding: 15px 35px;
+      font-size: 1.6rem;
       cursor: pointer;
-      margin: 5px;
+      margin: 8px;
+      min-width: 120px;
+      font-weight: bold;
+      line-height: 1.4;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
     }
-    button:active {
-      background-color: #666;
-    }
+    .start-btn { background-color: #28a745; }
+    .start-btn:active { background-color: #218838; }
+    .pause-btn { background-color: #fd7e14; }
+    .pause-btn:active { background-color: #e66900; }
+    .reset-btn { background-color: #dc3545; }
+    .reset-btn:active { background-color: #b02a37; }
+
     .input-group {
       margin: 10px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
     }
-    input {
+    .input-group input {
       padding: 3px;
-      font-size: 3rem;
+      font-size: 2rem;
       border-radius: 5px;
       border: none;
       text-align: center;
+      width: 110px;
+    }
+    .input-group span {
+      font-size: 1.5rem;
     }
   </style>
 </head>
@@ -70,11 +87,11 @@
     <div class="time-display" id="quarterTime">01:50</div>
     <div class="input-group">
       <input type="number" id="quarterInput" min="1" value="110" onchange="updateDuration('quarter', this.value)">
-      <span> segundos</span>
+      <span>segundos</span>
     </div>
-    <button onclick="startTimer('quarter')">Iniciar</button>
-    <button onclick="pauseTimer('quarter')">Pausar</button>
-    <button onclick="resetTimer('quarter')">Reiniciar</button>
+    <button class="start-btn" onclick="startTimer('quarter')">Iniciar</button>
+    <button class="pause-btn" onclick="pauseTimer('quarter')">Pausar</button>
+    <button class="reset-btn" onclick="resetTimer('quarter')">Reiniciar</button>
   </div>
 
   <div class="timer-block">
@@ -82,11 +99,11 @@
     <div class="time-display" id="breakTime">09:50</div>
     <div class="input-group">
       <input type="number" id="breakInput" min="1" value="590" onchange="updateDuration('break', this.value)">
-      <span> segundos</span>
+      <span>segundos</span>
     </div>
-    <button onclick="startTimer('break')">Iniciar</button>
-    <button onclick="pauseTimer('break')">Pausar</button>
-    <button onclick="resetTimer('break')">Reiniciar</button>
+    <button class="start-btn" onclick="startTimer('break')">Iniciar</button>
+    <button class="pause-btn" onclick="pauseTimer('break')">Pausar</button>
+    <button class="reset-btn" onclick="resetTimer('break')">Reiniciar</button>
   </div>
 
   <audio id="alertSound" src="alarm.wav" preload="auto"></audio>
@@ -116,19 +133,16 @@
     function updateDuration(type, value) {
       let newDuration = parseInt(value, 10);
       if (isNaN(newDuration) || newDuration < 1) {
-        newDuration = type === 'quarter' ? 110 : 590; // Valor por defecto si es inválido
+        newDuration = type === 'quarter' ? 110 : 590;
         document.getElementById(type === 'quarter' ? 'quarterInput' : 'breakInput').value = newDuration;
       }
       timers[type].duration = newDuration;
-      timers[type].remaining = newDuration; // Resetea el remaining al nuevo duration
+      timers[type].remaining = newDuration;
       document.getElementById(type + "Time").textContent = formatTime(newDuration);
     }
 
     function startTimer(type) {
-      if (!timers[type]) {
-        console.error(`Tipo de temporizador "${type}" no encontrado`);
-        return;
-      }
+      if (!timers[type]) return;
       let timer = timers[type];
       if (timer.interval) clearInterval(timer.interval);
       timer.remaining = timer.remaining > 0 ? timer.remaining : timer.duration;
@@ -138,26 +152,19 @@
         document.getElementById(type + "Time").textContent = formatTime(timer.remaining);
         
         if (timer.remaining === 10) {
-          document.getElementById("alertSound").play().catch(error => {
-            console.error("Error al reproducir el sonido:", error);
-          });
+          document.getElementById("alertSound").play().catch(console.error);
         }
 
         if (timer.remaining <= 0) {
           clearInterval(timer.interval);
           timer.interval = null;
-          document.getElementById("alertSound").play().catch(error => {
-            console.error("Error al reproducir el sonido:", error);
-          });
+          document.getElementById("alertSound").play().catch(console.error);
         }
       }, 1000);
     }
 
     function pauseTimer(type) {
-      if (!timers[type]) {
-        console.error(`Tipo de temporizador "${type}" no encontrado`);
-        return;
-      }
+      if (!timers[type]) return;
       let timer = timers[type];
       if (timer.interval) {
         clearInterval(timer.interval);
@@ -166,10 +173,7 @@
     }
 
     function resetTimer(type) {
-      if (!timers[type]) {
-        console.error(`Tipo de temporizador "${type}" no encontrado`);
-        return;
-      }
+      if (!timers[type]) return;
       let timer = timers[type];
       if (timer.interval) clearInterval(timer.interval);
       timer.remaining = timer.duration;
@@ -182,12 +186,10 @@
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').then(() => {
         console.log('Service Worker registrado');
-      }).catch(error => {
-        console.error('Error al registrar Service Worker:', error);
-      });
+      }).catch(console.error);
     }
   </script>
 
 </body>
 </html>
-      
+     
