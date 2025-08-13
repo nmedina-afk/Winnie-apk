@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Temporizador Hockey</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" href="/icon-192.png"> <!-- Añadido -->
+  <link rel="icon" type="image/png" href="/icon.png"> <!-- Favicon -->
   <style>
     body {
       background-color: black;
@@ -13,7 +13,10 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
     }
     .clock {
       font-size: 3rem;
@@ -28,7 +31,9 @@
       background-color: #1c1c1c;
       border-radius: 15px;
       padding: 20px;
-      margin: 15px;
+      margin: 20px 15px; /* Más margen vertical */
+      width: 90%;
+      max-width: 400px; /* Limita el ancho */
     }
     .time-display {
       font-size: 3rem;
@@ -43,7 +48,7 @@
       padding: 10px 30px;
       font-size: 1.2rem;
       cursor: pointer;
-      margin: 5px;
+      margin: 10px; /* Más margen entre botones */
     }
     button:active {
       background-color: #666;
@@ -75,7 +80,6 @@
   <audio id="alertSound" src="alarm.wav" preload="auto"></audio>
 
   <script>
-    // Inicializa timers globalmente
     let timers = {
       quarter: { duration: 110, remaining: 110, interval: null },
       break: { duration: 590, remaining: 590, interval: null }
