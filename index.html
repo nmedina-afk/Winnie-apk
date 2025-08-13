@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hockey Timer PWA</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b5fff">
+  <style>
+    :root{--accent:#0b5fff;--bg:#000;--panel:#1c1c1c;--text:#fff;--muted:#bbb}
+    *{box-sizing:border-box}
+    body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--text);margin:0}
+    header{padding:16px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #111}
+    h1{margin:0;font-size:1rem;color:#ddd}
+    .clock{font-size:2.2rem;font-weight:700}
+    .tabs{display:flex;gap:8px;padding:10px 14px}
+    .tab{flex:1;text-align:center;padding:10px 12px;border-radius:10px;background:#121212;color:#bbb;border:1px solid #222;cursor:pointer}
+    .tab.active{background:#0b5fff;color:#fff;border-color:#0b5fff}
+    .container{padding:10px 14px;display:grid;gap:12px}
+    .panel{background:var(--panel);padding:14px;border-radius:18px}
+    .title{font-size:1.8rem;font-weight:700;margin:8px 4px 6px}
+    .block{background:#161616;border-radius:18px;padding:20px;margin:10px 0}
+    .label{color:#aaa;margin-bottom:10px;font-weight:600}
+    .time{font-size:3rem;font-weight:800;letter-spacing:1px;margin:8px 0;text-align:center}
+    button{background:#444;border:none;border-radius:24px;color:#fff;padding:12px 18px;font-size:1.05rem;cursor:pointer}
+    button.primary{background:var(--accent)}
+    button.ghost{background:transparent;border:1px solid var(--accent);color:var(--accent)}
+    .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .status{font-weight:700}
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Hockey Timer</h1>
+    <div class="clock" id="localClock">--:--:--</div>
+  </header>
+
+  <div class="tabs">
+    <div id="tabManual" class="tab active">Manual</div>
+    <div id="tabMatch" class="tab">Partido</div>
+  </div>
+
+  <div class="container">
+    <!-- Manual UI -->
+    <div id="viewManual" class="panel">
+      <div class="title">Temporizador</div>
+
+      <div class="block">
+        <div class="label">Cuartos</div>
+        <div class="time" id="quarterTime">00:01:50</div>
+        <div class="row">
+          <button class="primary" id="qStart">Iniciar</button>
+          <button id="qPause">Pausar</button>
+          <button class="ghost" id="qReset">Reset</button>
+        </div>
+        <div class="muted" id="qInfo">Aviso a 00:01:40</div>
+      </div>
+
+      <div class="block">
+        <div class="label">Entretiempo</div>
+        <div class="time" id="breakTime">00:09:50</div>
+        <div class="row">
+          <button class="primary" id="bStart">Iniciar</button>
+          <button id="bPause">Pausar</button>
+          <button class="ghost" id="bReset">Reset</button>
+        </div>
+        <div class="muted" id="bInfo">Aviso a 00:09:40</div>
+      </div>
+    </div>
+
+    <!-- Match UI -->
+    <div id="viewMatch" class="panel" style="display:none">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <div class="status">Estado: <span id="status">Detenido</span></div>
+          <div>Periodo: <strong id="periodLabel">—</strong></div>
+        </div>
+        <div class="row">
+          <button class="primary" id="mStart">Iniciar</button>
+          <button id="mPause">Pausar</button>
+          <button class="ghost" id="mNext">Siguiente</button>
+          <button class="ghost" id="mReset">Reset</button>
+        </div>
+      </div>
+
+      <div class="time" id="periodDisplay">--:--</div>
+      <div class="muted" id="subInfo">—</div>
+
+      <div class="row" style="margin-top:10px">
+        <label>Duración cuarto (min): <input type="number" id="quarterDur" value="15" min="1" style="width:80px;margin-left:6px"></label>
+        <label>Descanso corto (seg): <input type="number" id="shortBreak" value="120" style="width:80px;margin-left:6px"></label>
+        <label>Entretiempo (seg): <input type="number" id="longBreak" value="600" style="width:80px;margin-left:6px"></label>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <button id="btnVTR">Tirar VTR</button>
+        <button id="btnCronista">Avisar cronista</button>
+        <button id="btnPerm">Permisos</button>
+        <button id="btnKeepOn">Mantener pantalla</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="soundPre" preload="auto" src="alarm.wav"></audio>
+  <audio id="soundFinal" preload="auto" src="alarm.wav"></audio>
+
+  <script src="app.js"></script>
+</body>
+</html>
