@@ -15,7 +15,7 @@
       text-align: center;
     }
     .clock {
-      font-size: 3rem;
+      font-size: 6rem;
       font-weight: bold;
       margin-top: 20px;
     }
@@ -47,6 +47,16 @@
     button:active {
       background-color: #666;
     }
+    .input-group {
+      margin: 10px 0;
+    }
+    input {
+      padding: 3px;
+      font-size: 3rem;
+      border-radius: 5px;
+      border: none;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -58,6 +68,10 @@
   <div class="timer-block">
     <div>Cuartos</div>
     <div class="time-display" id="quarterTime">01:50</div>
+    <div class="input-group">
+      <input type="number" id="quarterInput" min="1" value="110" onchange="updateDuration('quarter', this.value)">
+      <span> segundos</span>
+    </div>
     <button onclick="startTimer('quarter')">Iniciar</button>
     <button onclick="pauseTimer('quarter')">Pausar</button>
     <button onclick="resetTimer('quarter')">Reiniciar</button>
@@ -66,6 +80,10 @@
   <div class="timer-block">
     <div>Entretiempo</div>
     <div class="time-display" id="breakTime">09:50</div>
+    <div class="input-group">
+      <input type="number" id="breakInput" min="1" value="590" onchange="updateDuration('break', this.value)">
+      <span> segundos</span>
+    </div>
     <button onclick="startTimer('break')">Iniciar</button>
     <button onclick="pauseTimer('break')">Pausar</button>
     <button onclick="resetTimer('break')">Reiniciar</button>
@@ -81,7 +99,10 @@
 
     function updateClock() {
       let now = new Date();
-      document.getElementById("localClock").textContent = now.toLocaleTimeString();
+      let hours = now.getHours().toString().padStart(2, '0');
+      let minutes = now.getMinutes().toString().padStart(2, '0');
+      let seconds = now.getSeconds().toString().padStart(2, '0');
+      document.getElementById("localClock").textContent = `${hours}:${minutes}:${seconds}`;
     }
     setInterval(updateClock, 1000);
     updateClock();
@@ -90,6 +111,17 @@
       let m = Math.floor(sec / 60).toString().padStart(2, '0');
       let s = (sec % 60).toString().padStart(2, '0');
       return `${m}:${s}`;
+    }
+
+    function updateDuration(type, value) {
+      let newDuration = parseInt(value, 10);
+      if (isNaN(newDuration) || newDuration < 1) {
+        newDuration = type === 'quarter' ? 110 : 590; // Valor por defecto si es inválido
+        document.getElementById(type === 'quarter' ? 'quarterInput' : 'breakInput').value = newDuration;
+      }
+      timers[type].duration = newDuration;
+      timers[type].remaining = newDuration; // Resetea el remaining al nuevo duration
+      document.getElementById(type + "Time").textContent = formatTime(newDuration);
     }
 
     function startTimer(type) {
@@ -158,3 +190,4 @@
 
 </body>
 </html>
+      
