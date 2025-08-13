@@ -3,9 +3,7 @@ const urlsToCache = [
   '/',
   '/index.html',
   '/alarm.wav',
-  '/manifest.json',
-  '/icon-192.png',      // Ruta corregida (en la raíz)
-  '/icon-512.png'   // Ruta corregida (en la raíz)
+  '/manifest.json'
 ];
 
 self.addEventListener('install', event => {
