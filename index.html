@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
-<head> 
-<link rel="manifest" href="manifest.json">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Temporizador Hockey</title>
+<link rel="manifest" href="manifest.json">
 <style>
   body {
     background-color: black;
@@ -15,7 +15,7 @@
     text-align: center;
   }
   .clock {
-    font-size: 5rem;
+    font-size: 3rem;
     font-weight: bold;
     margin-top: 20px;
   }
@@ -129,6 +129,12 @@ function resetTimer(type) {
   document.getElementById(type + "Time").textContent = formatTime(timer.remaining);
   document.getElementById("alertSound").pause();
   document.getElementById("alertSound").currentTime = 0;
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').then(() => {
+    console.log('Service Worker registrado');
+  });
 }
 </script>
 
